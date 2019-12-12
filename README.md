@@ -13,17 +13,7 @@ npm install --save fcm-notifications
 ## Usage
 
 ```jsx
-import React, { Component } from 'react'
 
-import MyComponent from 'fcm-notifications'
-
-class Example extends Component {
-  render () {
-    return (
-      <MyComponent />
-    )
-  }
-}
 ```
 
 ## License
