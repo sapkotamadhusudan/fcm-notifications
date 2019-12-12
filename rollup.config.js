@@ -1,39 +1,127 @@
-import babel from 'rollup-plugin-babel'
-import commonjs from 'rollup-plugin-commonjs'
-import external from 'rollup-plugin-peer-deps-external'
-import postcss from 'rollup-plugin-postcss'
-import resolve from 'rollup-plugin-node-resolve'
-import url from 'rollup-plugin-url'
-import svgr from '@svgr/rollup'
+/* eslint-disable flowtype/require-valid-file-annotation, no-console, import/extensions */
+import nodeResolve from 'rollup-plugin-node-resolve';
+import replace from 'rollup-plugin-replace';
+import commonjs from 'rollup-plugin-commonjs';
+import babel from 'rollup-plugin-babel';
+import json from 'rollup-plugin-json';
+import { terser } from 'rollup-plugin-terser';
+import sourceMaps from 'rollup-plugin-sourcemaps';
+import pkg from './package.json';
 
-import pkg from './package.json'
+const propTypeIgnore = { "import PropTypes from 'prop-types';": "'';" };
 
-export default {
-  input: 'src/index.js',
-  output: [
-    {
-      file: pkg.main,
-      format: 'cjs',
-      sourcemap: true
+const cjs = {
+  exports: 'named',
+  format: 'cjs',
+  sourcemap: true,
+};
+
+const esm = {
+  format: 'esm',
+  sourcemap: true,
+};
+
+const getCJS = override => ({ ...cjs, ...override });
+const getESM = override => ({ ...esm, ...override });
+
+const commonPlugins = [
+  sourceMaps(),
+  json(),
+  nodeResolve({
+    browser: true,
+  }),
+  babel({
+    babelrc: false,
+    exclude: 'node_modules/**',
+    presets: [['@babel/env', { loose: true, modules: false }], '@babel/react'],
+    plugins: ['@babel/plugin-proposal-class-properties'],
+  }),
+  commonjs({
+    namedExports: {
+      'react-native': ['View', 'Image', 'Animated', 'Easing', 'Text'],
+      'react-is': ['isElement', 'isValidElementType', 'ForwardRef'],
     },
-    {
-      file: pkg.module,
-      format: 'es',
-      sourcemap: true
-    }
+  }),
+  replace({
+    __VERSION__: JSON.stringify(pkg.version),
+  }),
+];
+
+const prodPlugins = [
+  replace({
+    ...propTypeIgnore,
+    'process.env.NODE_ENV': JSON.stringify('production'),
+  }),
+  terser({
+    sourcemap: true,
+  }),
+];
+
+const configBase = {
+  input: './lib/index.js',
+  types: './lib/index.d.ts',
+
+  // \0 is rollup convention for generated in memory modules
+  external: id => !id.startsWith('\0') && !id.startsWith('.') && !id.startsWith('/'),
+  plugins: commonPlugins,
+};
+
+const globals = {
+  react: 'React', 'react-native': 'reactNative', 'prop-types': 'PropTypes',
+};
+
+const standaloneBaseConfig = {
+  ...configBase,
+  input: './lib/index.js',
+  types: './lib/index.d.ts',
+  output: {
+    file: 'dist/fcm-notifications.js',
+    format: 'umd',
+    globals,
+    name: 'speedometer',
+    sourcemap: true,
+  },
+  plugins: configBase.plugins.concat(
+    replace({
+      __SERVER__: JSON.stringify(false),
+    }),
+  ),
+};
+
+const standaloneConfig = {
+  ...standaloneBaseConfig,
+  plugins: standaloneBaseConfig.plugins.concat(
+    replace({
+      'process.env.NODE_ENV': JSON.stringify('development'),
+    }),
+  ),
+};
+
+const standaloneProdConfig = {
+  ...standaloneBaseConfig,
+  output: {
+    ...standaloneBaseConfig.output,
+    file: 'dist/fcm-notifications.min.js',
+  },
+  plugins: standaloneBaseConfig.plugins.concat(prodPlugins),
+};
+
+const nativeConfig = {
+  ...configBase,
+  input: './lib/index.js',
+  types: './lib/index.d.ts',
+  output: [
+    getCJS({
+      file: 'dist/fcm-notifications.cjs.js',
+    }),
+    getESM({
+      file: 'dist/fcm-notifications.esm.js',
+    }),
   ],
-  plugins: [
-    external(),
-    postcss({
-      modules: true
-    }),
-    url(),
-    svgr(),
-    babel({
-      exclude: 'node_modules/**',
-      plugins: [ 'external-helpers' ]
-    }),
-    resolve(),
-    commonjs()
-  ]
-}
+};
+
+export default [
+  standaloneConfig,
+  standaloneProdConfig,
+  nativeConfig,
+];

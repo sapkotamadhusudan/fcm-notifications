@@ -1,7 +1,5 @@
-package io.invertase.firebase.notifications;
-
 /*
- * Copyright (c) 2016-present Invertase Limited & Contributors
+ * Copyright (c) 2019-present Madhusudan Sapkota & Contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this library except in compliance with the License.
@@ -16,6 +14,9 @@ package io.invertase.firebase.notifications;
  * limitations under the License.
  *
  */
+
+ 
+package io.invertase.firebase.notifications;
 
 import android.util.Log;
 
