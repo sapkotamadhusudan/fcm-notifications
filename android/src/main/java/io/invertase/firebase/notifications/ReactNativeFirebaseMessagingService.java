@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
- 
+
 package io.invertase.firebase.notifications;
 
 import android.content.ComponentName;
@@ -41,7 +41,6 @@ public class ReactNativeFirebaseMessagingService extends FirebaseMessagingServic
 
   @Override
   public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
-    Log.d(TAG, "onMessageReceived");
     ReactNativeFirebaseEventEmitter emitter = ReactNativeFirebaseEventEmitter.getSharedInstance();
 
     // ----------------------

@@ -83,7 +83,6 @@ static bool jsReady = FALSE;
 
 // APNS - only called on iOS versions less than v10 (which isn't officially supported, added here for ease later on)
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-     NSLog(@"RNFNotification less than v10 %@", userInfo);
   // send message event for remote notifications that have also have data
   if (userInfo[@"aps"] && ((NSDictionary *) userInfo[@"aps"]).count >= 1 && userInfo[@"aps"][@"content-available"]) {
     [[RNFBRCTEventEmitter shared] sendEventWithName:@"messaging_message_received" body:[RNFBMessagingSerializer remoteMessageAppDataToDict:userInfo withMessageId:nil]];
@@ -92,7 +91,6 @@ static bool jsReady = FALSE;
 
 // APNS - only called on iOS versions greater than or equal to v10 (this one is officially supported)
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler {
-    NSLog(@"RNFNotification %@", userInfo);
   // send message event for remote notifications that have also have data
   if (userInfo[@"aps"] && ((NSDictionary *) userInfo[@"aps"]).count >= 1 && userInfo[@"aps"][@"content-available"]) {
     [[RNFBRCTEventEmitter shared] sendEventWithName:@"messaging_message_received" body:[RNFBMessagingSerializer remoteMessageAppDataToDict:userInfo withMessageId:nil]];

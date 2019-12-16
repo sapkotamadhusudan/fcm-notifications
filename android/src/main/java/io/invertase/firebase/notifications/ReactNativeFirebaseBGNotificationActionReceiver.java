@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
- 
+
 package io.invertase.firebase.notifications;
 
 import android.app.RemoteInput;

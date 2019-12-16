@@ -46,6 +46,23 @@ class ReactNativeFirebaseNotificationChannel {
     return (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
   }
 
+  public static String createDefaultChannel() {
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+      String id = "99";
+      String name = "default";
+      try {
+        NotificationChannel notificationChannel = getNotificationManager().getNotificationChannel(id);
+        if (notificationChannel == null) {
+          NotificationChannel channel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_DEFAULT);
+          getNotificationManager().createNotificationChannel(channel);
+        }
+      } catch (Exception ignore) {
+      }
+      return id;
+    }
+    return null;
+  }
+
   static WritableMap getChannel(String channelId) {
     if (Build.VERSION.SDK_INT >= 26) {
       return createChannelMap(getNotificationManager().getNotificationChannel(channelId));

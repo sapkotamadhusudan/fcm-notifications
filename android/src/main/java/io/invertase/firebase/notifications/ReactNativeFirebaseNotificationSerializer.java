@@ -26,17 +26,14 @@ import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.bridge.WritableNativeArray;
 import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Map;
 import java.util.Set;
 
 import io.invertase.firebase.common.ReactNativeFirebaseEvent;
-import io.invertase.firebase.common.SharedUtils;
 
 import static io.invertase.firebase.app.ReactNativeFirebaseApp.getApplicationContext;
 import static io.invertase.firebase.common.SharedUtils.getResId;
@@ -62,31 +59,31 @@ public class ReactNativeFirebaseNotificationSerializer {
 
 
   // Notification Keys
-    private static final String KEY_TITLE = "title";
-    private static final String KEY_BODY = "body";
-    private static final String KEY_ICON = "icon";
-    private static final String KEY_IMAGE_URL = "imageUrl";
-    private static final String KEY_SOUND_URL = "soundUrl";
-    private static final String KEY_TAG = "tag";
-    private static final String KEY_COLOR = "color";
-    private static final String KEY_CLICK_ACTION = "clickAction";
-    private static final String KEY_CHANNEL_ID = "channelId";
-    private static final String KEY_LINK = "link";
-    private static final String KEY_TICKER = "ticker";
-    private static final String KEY_STICKY = "sticky";
-    private static final String KEY_LOCAL_ONLY = "localOnly";
-    private static final String KEY_DEFAULT_SOUND = "defaultSound";
-    private static final String KEY_DEFAULT_VIBRATING_SETTING = "defaultVibratingSetting";
-    private static final String KEY_DEFAULT_LIGHT_SETTING = "defaultLightSetting";
-    private static final String KEY_NOTIFICATION_PRIORITY = "notificationPriority";
-    private static final String KEY_NOTIFICATION_COUNT = "notificationCount";
-    private static final String KEY_VISIBILITY = "visibility";
-    private static final String KEY_NOTIFICATION_SOUND = "notificationSound";
-    private static final String KEY_EVENT_TIME = "eventTime";
-    private static final String KEY_VIBRATE_TIMINGS = "vibrateTimings";
-    private static final String KEY_LIGHT_SETTING = "lightSettings";
+  private static final String KEY_TITLE = "title";
+  private static final String KEY_BODY = "body";
+  private static final String KEY_ICON = "icon";
+  private static final String KEY_IMAGE_URL = "imageUrl";
+  private static final String KEY_SOUND_URL = "soundUrl";
+  private static final String KEY_TAG = "tag";
+  private static final String KEY_COLOR = "color";
+  private static final String KEY_CLICK_ACTION = "clickAction";
+  private static final String KEY_CHANNEL_ID = "channelId";
+  private static final String KEY_LINK = "link";
+  private static final String KEY_TICKER = "ticker";
+  private static final String KEY_STICKY = "sticky";
+  private static final String KEY_LOCAL_ONLY = "localOnly";
+  private static final String KEY_DEFAULT_SOUND = "defaultSound";
+  private static final String KEY_DEFAULT_VIBRATING_SETTING = "defaultVibratingSetting";
+  private static final String KEY_DEFAULT_LIGHT_SETTING = "defaultLightSetting";
+  private static final String KEY_NOTIFICATION_PRIORITY = "notificationPriority";
+  private static final String KEY_NOTIFICATION_COUNT = "notificationCount";
+  private static final String KEY_VISIBILITY = "visibility";
+  private static final String KEY_NOTIFICATION_SOUND = "notificationSound";
+  private static final String KEY_EVENT_TIME = "eventTime";
+  private static final String KEY_VIBRATE_TIMINGS = "vibrateTimings";
+  private static final String KEY_LIGHT_SETTING = "lightSettings";
 
-    private static final String EVENT_NOTIFICATION_RECEIVED = "notifications_notification_received";
+  private static final String EVENT_NOTIFICATION_RECEIVED = "notifications_notification_received";
 
   private static final String KEY_ACTION = "action";
   private static final String KEY_NOTIFICATION = "notification";
@@ -112,11 +109,11 @@ public class ReactNativeFirebaseNotificationSerializer {
     return notificationMap;
   }
 
-  static ReactNativeFirebaseEvent createRemoteNotificationDisplayedEvent(WritableMap notification){
+  static ReactNativeFirebaseEvent createRemoteNotificationDisplayedEvent(WritableMap notification) {
     return new ReactNativeFirebaseEvent(EVENT_NOTIFICATION_DISPLAYED, notification);
   }
 
-  static ReactNativeFirebaseEvent createRemoteNotificationOpenedEvent(Bundle notification){
+  static ReactNativeFirebaseEvent createRemoteNotificationOpenedEvent(Bundle notification) {
     return new ReactNativeFirebaseEvent(EVENT_NOTIFICATION_OPENED, remoteNotificationToWritableMap(notification));
   }
 
@@ -164,7 +161,7 @@ public class ReactNativeFirebaseNotificationSerializer {
   static ReactNativeFirebaseEvent newTokenToTokenEvent(String newToken) {
     WritableMap eventBody = Arguments.createMap();
     eventBody.putString(KEY_TOKEN, newToken);
-    return new ReactNativeFirebaseEvent("EVENT_NEW_TOKEN", eventBody);
+    return new ReactNativeFirebaseEvent(EVENT_NEW_TOKEN, eventBody);
   }
 
   static WritableMap remoteMessageToWritableMap(RemoteMessage remoteMessage) {
@@ -224,11 +221,11 @@ public class ReactNativeFirebaseNotificationSerializer {
       notificationMap.putString(KEY_BODY, body);
     }
 
-    if (notification.getIcon() != null){
+    if (notification.getIcon() != null) {
       notificationMap.putString(KEY_ICON, notification.getIcon());
     }
 
-    if (notification.getChannelId() != null){
+    if (notification.getChannelId() != null) {
       notificationMap.putString(KEY_CHANNEL_ID, notification.getChannelId());
     }
 
@@ -276,7 +273,7 @@ public class ReactNativeFirebaseNotificationSerializer {
       notificationMap.putInt(KEY_NOTIFICATION_COUNT, notification.getNotificationCount());
     }
 
-    if (notification.getSound() != null){
+    if (notification.getSound() != null) {
       notificationMap.putString(KEY_NOTIFICATION_SOUND, notification.getSound());
     }
 
@@ -329,7 +326,7 @@ public class ReactNativeFirebaseNotificationSerializer {
     return builder.build();
   }
 
-  private static  @Nullable
+  private static @Nullable
   String getNotificationBody(RemoteMessage.Notification notification) {
     String body = notification.getBody();
     String bodyLocKey = notification.getBodyLocalizationKey();
@@ -345,7 +342,7 @@ public class ReactNativeFirebaseNotificationSerializer {
     }
   }
 
-  private static  @Nullable
+  private static @Nullable
   String getNotificationTitle(RemoteMessage.Notification notification) {
     String title = notification.getTitle();
     String titleLocKey = notification.getTitleLocalizationKey();

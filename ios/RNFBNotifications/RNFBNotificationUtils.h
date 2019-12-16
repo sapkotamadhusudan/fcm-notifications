@@ -36,6 +36,7 @@
 extern NSString *const NOTIFICATIONS_NOTIFICATION_DISPLAYED = @"notifications_notification_displayed";
 extern NSString *const NOTIFICATIONS_NOTIFICATION_OPENED = @"notifications_notification_opened";
 extern NSString *const NOTIFICATIONS_NOTIFICATION_RECEIVED = @"notifications_notification_received";
+extern NSString *const ON_TOKEN_REFRESH = @"messaging_token_refresh";
 extern NSString *const DEFAULT_ACTION = @"com.apple.UNNotificationDefaultActionIdentifier";
 
 #pragma mark -

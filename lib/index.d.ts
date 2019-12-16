@@ -1249,7 +1249,7 @@ export namespace Notifications {
   /**
    * TODO
    */
-  export type NotificationObserver = (notification: any) => void;
+  export type NotificationObserver = (notification: Notification) => void;
 
   export interface Schedule {
     /**
@@ -1727,7 +1727,7 @@ export namespace Notifications {
      *
      * @android
      */
-    setBackgroundMessageHandler(handler: (message: Notification) => any);
+    setBackgroundNotificationHandler(handler: (message: Notification) => any) : () => void;
 
     /**
      * Apps can subscribe to a topic, which allows the FCM server to send targeted messages to only those

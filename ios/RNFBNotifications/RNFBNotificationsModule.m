@@ -15,20 +15,20 @@
  *
  */
  
-#import "RNFBNotificationsModule.h"
+#import <RNFBNotificationsModule.h>
 
 #if __has_include(<FirebaseMessaging/FIRMessaging.h>)
 #import <React/RCTUtils.h>
 #import <React/RCTConvert.h>
 #import <Firebase/Firebase.h>
 #import <RNFBApp/RNFBSharedUtils.h>
+#import <RNFBApp/RNFBRCTEventEmitter.h>
 #import <UserNotifications/UserNotifications.h>
 
-#import "RNFBNotificationsDelegate.h"
-#import "RNFBNotification.h"
-#import "RNFBNotificationUtils.h"
-#import "RNFBNotificationSerializer.h"
-#import "RNFBMessagingAppDelegateInterceptor.h"
+#import <RNFBNotificationsDelegate.h>
+#import <RNFBNotificationUtils.h>
+#import <RNFBNotificationSerializer.h>
+#import <RNFBMessagingAppDelegateInterceptor.h>
 
 
 @implementation RNFBNotificationsModule
@@ -325,16 +325,18 @@ RCT_EXPORT_METHOD(getInitialNotification:(RCTPromiseResolveBlock)resolve rejecte
     if (initialNotification) {
         resolve(initialNotification);
     }
-    else if (self.bridge.launchOptions[UIApplicationLaunchOptionsLocalNotificationKey]) {
-        UILocalNotification *localNotification = self.bridge.launchOptions[UIApplicationLaunchOptionsLocalNotificationKey];
+    
+    RCTBridge *bridge = [[RNFBRCTEventEmitter shared] bridge];
+    if (bridge != nil && bridge.launchOptions[UIApplicationLaunchOptionsLocalNotificationKey]) {
+        UILocalNotification *localNotification = bridge.launchOptions[UIApplicationLaunchOptionsLocalNotificationKey];
         
         resolve(@{
             @"action": DEFAULT_ACTION,
             @"notification": [RNFBNotificationUtils parseUILocalNotification:localNotification]
         });
     }
-    else if (self.bridge.launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey]) {
-        NSDictionary *remoteNotification = self.bridge.launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
+    else if (bridge != nil && bridge.launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey]) {
+        NSDictionary *remoteNotification = bridge.launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
         resolve(@{
                   @"action": DEFAULT_ACTION,
                   @"notification": [RNFBNotificationUtils parseUserInfo:remoteNotification]

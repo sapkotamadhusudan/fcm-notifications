@@ -24,7 +24,6 @@
 #import "RNFBNotificationUtils.h"
 
 
-
 @implementation RNFBNotificationDelegate{
     NSMutableDictionary<NSString *, void (^)(UIBackgroundFetchResult)> *fetchCompletionHandlers;
     NSMutableDictionary<NSString *, void(^)(void)> *completionHandlers;
@@ -42,6 +41,7 @@ static bool jsReady = FALSE;
   dispatch_once(&once, ^{
     sharedInstance = [[RNFBNotificationDelegate alloc] init];
 
+    
     [FIRMessaging messaging].delegate = sharedInstance;
     [FIRMessaging messaging].shouldEstablishDirectChannel = YES;
     
@@ -57,13 +57,13 @@ static bool jsReady = FALSE;
 }
 
 + (void) jsInitialised {
+    NSLog(@"jsInitialised");
     jsReady = TRUE;
 }
 
 - (id)init {
     self = [super init];
     if (self != nil) {
-        NSLog(@"Setting up RNFBNotificationDelegate instance");
         [self initialise];
     }
     return self;
@@ -125,7 +125,7 @@ static bool jsReady = FALSE;
 
 // JS -> `onTokenRefresh`
 - (void)messaging:(FIRMessaging *)messaging didReceiveRegistrationToken:(NSString *)fcmToken {
-  [[RNFBRCTEventEmitter shared] sendEventWithName:@"messaging_token_refresh" body:@{
+    [[RNFBRCTEventEmitter shared] sendEventWithName:ON_TOKEN_REFRESH body:@{
       @"token": fcmToken
   }];
 }
@@ -138,7 +138,7 @@ static bool jsReady = FALSE;
 // Receive data messages on iOS 10+ directly from FCM (bypassing APNs) when the app is in the foreground.
 // To enable direct data messages, you can set [Messaging messaging].shouldEstablishDirectChannel to YES.
 - (void)messaging:(nonnull FIRMessaging *)messaging didReceiveMessage:(nonnull FIRMessagingRemoteMessage *)remoteMessage {
-  [[RNFBRCTEventEmitter shared] sendEventWithName:@"messaging_message_received" body:[RNFBMessagingSerializer remoteMessageToDict:remoteMessage]];
+    [[RNFBRCTEventEmitter shared] sendEventWithName:NOTIFICATIONS_NOTIFICATION_RECEIVED body:[RNFBMessagingSerializer remoteMessageToDict:remoteMessage]];
 }
 
 
@@ -147,7 +147,7 @@ static bool jsReady = FALSE;
               fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     // FCM Data messages come through here if they specify content-available=true
     if (userInfo[@"aps"] && ((NSDictionary*)userInfo[@"aps"]).count == 1 && userInfo[@"aps"][@"content-available"]) {
-        [[RNFBRCTEventEmitter shared] sendEventWithName:@"notifications_notification_received" body:[RNFBMessagingSerializer remoteMessageAppDataToDict:userInfo withMessageId:nil]];
+        [[RNFBRCTEventEmitter shared] sendEventWithName:NOTIFICATIONS_NOTIFICATION_RECEIVED body:[RNFBMessagingSerializer remoteMessageAppDataToDict:userInfo withMessageId:nil]];
           // complete immediately
           completionHandler(UIBackgroundFetchResultNoData);
         return;
@@ -247,6 +247,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 #else
          withCompletionHandler:(void(^)())completionHandler NS_AVAILABLE_IOS(10_0) {
 #endif
+             
      NSDictionary *message = [RNFBNotificationUtils parseUNNotificationResponse:response];
            
      NSString *handlerKey = message[@"notification"][@"notificationId"];
@@ -268,10 +269,11 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
     // With this temporary instance, we cache any events to be sent as soon as the bridge is set on the module
     - (void)sendJSEvent:(NSString *)name body:(id)body {
         RNFBRCTEventEmitter *emitter = [RNFBRCTEventEmitter shared];
+        
         if (emitter.bridge && jsReady) {
             [emitter sendEventWithName:name body:body];
         } else {
-            if ([name isEqualToString:NOTIFICATIONS_NOTIFICATION_OPENED] && !initialNotification) {
+             if ([name isEqualToString:NOTIFICATIONS_NOTIFICATION_OPENED] && !initialNotification) {
                 initialNotification = body;
             } else if ([name isEqualToString:NOTIFICATIONS_NOTIFICATION_OPENED]) {
                 NSLog(@"Multiple notification open events received before the JS Notifications module has been initialised");

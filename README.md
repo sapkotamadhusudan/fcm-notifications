@@ -18,4 +18,4 @@ npm install --save fcm-notifications
 
 ## License
 
-MIT © [Madhusudan Sapkota](https://github.com/Madhusudan Sapkota)
+Apache-2.0 © [Madhusudan Sapkota](https://github.com/Madhusudan Sapkota)

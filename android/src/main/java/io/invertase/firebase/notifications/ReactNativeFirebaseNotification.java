@@ -85,9 +85,10 @@ public class ReactNativeFirebaseNotification {
 
   private Notification getNotification() {
     String channelId = Objects.requireNonNull(androidOptionsBundle.getString("channelId"));
+    if (channelId.isEmpty()) channelId = ReactNativeFirebaseNotificationChannel.createDefaultChannel();
+
     NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), channelId);
 
-    // TODO go through all options from bundle and set on notification
     if (notificationBundle.containsKey("title")) {
       notificationBuilder.setContentTitle(notificationBundle.getString("title"));
     }
@@ -313,6 +314,8 @@ public class ReactNativeFirebaseNotification {
       long when = (long) androidOptionsBundle.getDouble("when");
       notificationBuilder.setWhen(when);
     }
+
+    notificationBuilder.setContentIntent(createBroadcastIntent(getApplicationContext(), androidOptionsBundle, "clicked"));
 
     return notificationBuilder.build();
   }

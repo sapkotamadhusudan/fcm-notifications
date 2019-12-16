@@ -1,6 +1,6 @@
 {
   "name": "fcm-notifications",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A Firebase Push Notification library.",
   "author": "Madhusudan Sapkota",
   "license": "Apache-2.0",
@@ -24,5 +24,9 @@
   ],
   "peerDependencies": {
     "@react-native-firebase/app": "*"
+  },
+  "devDependencies": {
+    "@react-native-firebase/app-types": "6.2.0",
+    "@react-native-firebase/app": "6.2.0"
   }
 }
